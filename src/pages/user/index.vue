@@ -6,17 +6,18 @@
           Hi，Image
           <span class="regular"> 下午好，今天是你加入鹅厂的第 100 天～</span>
         </div>
-        <img src="@/assets/assets-tencent-logo.png" class="logo" />
+        <img class="logo" src="@/assets/assets-tencent-logo.png"/>
       </div>
 
-      <t-card class="user-info-list" title="个人信息" :bordered="false">
+      <t-card :bordered="false" class="user-info-list" title="个人信息">
         <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
+          <t-button shape="square" theme="default" variant="text">
+            <t-icon name="ellipsis"/>
           </t-button>
         </template>
         <t-row class="content" justify="space-between">
-          <t-col v-for="(item, index) in USER_INFO_LIST" :key="index" class="contract" :span="item.span ?? 3">
+          <t-col v-for="(item, index) in USER_INFO_LIST" :key="index" :span="item.span ?? 3"
+                 class="contract">
             <div class="contract-title">
               {{ item.title }}
             </div>
@@ -27,26 +28,26 @@
         </t-row>
       </t-card>
 
-      <t-card class="content-container" :bordered="false">
+      <t-card :bordered="false" class="content-container">
         <t-tabs value="second">
-          <t-tab-panel value="first" label="内容列表">
+          <t-tab-panel label="内容列表" value="first">
             <p>内容列表</p>
           </t-tab-panel>
-          <t-tab-panel value="second" label="内容列表">
-            <t-card :bordered="false" class="card-padding-no" title="主页访问数据" describe="（次）">
+          <t-tab-panel label="内容列表" value="second">
+            <t-card :bordered="false" class="card-padding-no" describe="（次）" title="主页访问数据">
               <template #actions>
                 <t-date-range-picker
-                  class="card-date-picker-container"
                   :default-value="LAST_7_DAYS"
-                  theme="primary"
+                  class="card-date-picker-container"
                   mode="date"
+                  theme="primary"
                   @change="onLineChange"
                 />
               </template>
-              <div id="lineContainer" style="width: 100%; height: 328px" />
+              <div id="lineContainer" style="width: 100%; height: 328px"/>
             </t-card>
           </t-tab-panel>
-          <t-tab-panel value="third" label="内容列表">
+          <t-tab-panel label="内容列表" value="third">
             <p>内容列表</p>
           </t-tab-panel>
         </t-tabs>
@@ -54,32 +55,33 @@
     </t-col>
 
     <t-col :flex="1">
-      <t-card class="user-intro" :bordered="false">
+      <t-card :bordered="false" class="user-intro">
         <t-avatar size="80px">T</t-avatar>
         <div class="name">My Account</div>
         <div class="position">XXG 港澳业务拓展组员工 直客销售</div>
       </t-card>
 
-      <t-card title="团队成员" class="user-team" :bordered="false">
+      <t-card :bordered="false" class="user-team" title="团队成员">
         <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
+          <t-button shape="square" theme="default" variant="text">
+            <t-icon name="ellipsis"/>
           </t-button>
         </template>
         <t-list :split="false">
           <t-list-item v-for="(item, index) in TEAM_MEMBERS" :key="index">
-            <t-list-item-meta :image="item.avatar" :title="item.title" :description="item.description" />
+            <t-list-item-meta :description="item.description" :image="item.avatar"
+                              :title="item.title"/>
           </t-list-item>
         </t-list>
       </t-card>
 
-      <t-card title="服务产品" class="product-container" :bordered="false">
+      <t-card :bordered="false" class="product-container" title="服务产品">
         <template #actions>
-          <t-button theme="default" shape="square" variant="text">
-            <t-icon name="ellipsis" />
+          <t-button shape="square" theme="default" variant="text">
+            <t-icon name="ellipsis"/>
           </t-button>
         </template>
-        <t-row class="content" :getters="16">
+        <t-row :getters="16" class="content">
           <t-col v-for="(item, index) in PRODUCT_LIST" :key="index" :span="3">
             <component :is="getIcon(item)"></component>
           </t-col>
@@ -93,24 +95,24 @@ export default {
   name: 'UserIndex',
 };
 </script>
-<script setup lang="ts">
-import { LineChart } from 'echarts/charts';
-import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+<script lang="ts" setup>
+import {LineChart} from 'echarts/charts';
+import {GridComponent, LegendComponent, TooltipComponent} from 'echarts/components';
 import * as echarts from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import type { DateRangeValue } from 'tdesign-vue-next';
-import { computed, nextTick, onMounted, onUnmounted, watch } from 'vue';
+import {CanvasRenderer} from 'echarts/renderers';
+import type {DateRangeValue} from 'tdesign-vue-next';
+import {computed, nextTick, onMounted, onUnmounted, watch} from 'vue';
 
 import ProductAIcon from '@/assets/assets-product-1.svg';
 import ProductBIcon from '@/assets/assets-product-2.svg';
 import ProductCIcon from '@/assets/assets-product-3.svg';
 import ProductDIcon from '@/assets/assets-product-4.svg';
-import { useSettingStore } from '@/store';
-import { changeChartsTheme } from '@/utils/color';
-import { LAST_7_DAYS } from '@/utils/date';
+import {useSettingStore} from '@/store';
+import {changeChartsTheme} from '@/utils/color';
+import {LAST_7_DAYS} from '@/utils/date';
 
-import { PRODUCT_LIST, TEAM_MEMBERS, USER_INFO_LIST } from './constants';
-import { getFolderLineDataSet } from './index';
+import {PRODUCT_LIST, TEAM_MEMBERS, USER_INFO_LIST} from './constants';
+import {getFolderLineDataSet} from './index';
 
 echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
 
@@ -138,7 +140,7 @@ const initChart = () => {
       x2: 10, // 默认80px
       y2: 30, // 默认60px
     },
-    ...getFolderLineDataSet({ ...chartColors.value }),
+    ...getFolderLineDataSet({...chartColors.value}),
   });
 };
 

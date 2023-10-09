@@ -6,7 +6,7 @@ store.use(createPersistedState());
 
 export { store };
 
-export * from './modules/notification';
+export * from './modules/param';
 export * from './modules/permission';
 export * from './modules/setting';
 export * from './modules/tabs-router';

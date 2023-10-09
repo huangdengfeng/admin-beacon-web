@@ -1,5 +1,5 @@
-import type { TabValue } from 'tdesign-vue-next';
-import { LocationQueryRaw, RouteRecordName } from 'vue-router';
+import type {TabValue} from 'tdesign-vue-next';
+import {LocationQueryRaw, RouteRecordName} from 'vue-router';
 
 import STYLE_CONFIG from '@/config/style';
 
@@ -10,8 +10,8 @@ export interface MenuRoute {
   icon?:
     | string
     | {
-        render: () => void;
-      };
+    render: () => void;
+  };
   redirect?: string;
   children: MenuRoute[];
   meta: any;
@@ -29,7 +29,9 @@ export type CommonObjType = {
 
 export interface UserInfo {
   name: string;
+  photo?: string;
   roles: string[];
+  permissions: string[];
 }
 
 export interface NotificationItem {

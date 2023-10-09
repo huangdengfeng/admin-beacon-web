@@ -63,45 +63,6 @@
   width: 400px;
   margin-top: var(--td-comp-margin-xxxxl);
 
-  &.login-qrcode {
-    .tip-container {
-      margin-bottom: var(--td-comp-margin-l);
-      font: var(--td-font-body-medium);
-      display: flex;
-      align-items: flex-start;
-
-      .tip {
-        color: var(--td-text-color-primary);
-        margin-right: var(--td-comp-margin-s);
-      }
-
-      .refresh {
-        display: flex;
-        align-items: center;
-        color: var(--td-brand-color);
-
-        .t-icon {
-          font-size: var(--td-comp-size-xxxs);
-          margin-left: var(--td-comp-margin-xs);
-        }
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-
-    .bottom-container {
-      margin-top: 32px;
-    }
-  }
-
-  &.login-phone {
-    .bottom-container {
-      margin-top: 66px;
-    }
-  }
-
   .check-container {
     display: flex;
     align-items: center;
@@ -116,21 +77,6 @@
 
       &:hover {
         cursor: pointer;
-      }
-    }
-  }
-
-  .verification-code {
-    display: flex;
-    align-items: center;
-
-    :deep(.t-form__controls) {
-      width: 100%;
-
-      button {
-        flex-shrink: 0;
-        margin-left: var(--td-comp-margin-l);
-        width: 128px;
       }
     }
   }
