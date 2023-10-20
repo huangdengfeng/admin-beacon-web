@@ -1,16 +1,16 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
-import type {AxiosInstance} from 'axios';
+import type { AxiosInstance } from 'axios';
 import isString from 'lodash/isString';
 import merge from 'lodash/merge';
-import {MessagePlugin} from "tdesign-vue-next";
+import { MessagePlugin } from 'tdesign-vue-next';
 
-import {ContentTypeEnum} from '@/constants';
-import router from "@/router";
+import { getStorageToken } from '@/config/global';
+import { ContentTypeEnum } from '@/constants';
+import router from '@/router';
 
-import {VAxios} from './Axios';
-import type {AxiosTransform, CreateAxiosOptions} from './AxiosTransform';
-import {formatRequestDate, joinTimestamp, setObjToUrlParams} from './utils';
-import {getStorageToken} from "@/config/global";
+import { VAxios } from './Axios';
+import type { AxiosTransform, CreateAxiosOptions } from './AxiosTransform';
+import { formatRequestDate, joinTimestamp, setObjToUrlParams } from './utils';
 
 const env = import.meta.env.MODE || 'development';
 
@@ -21,7 +21,7 @@ const host = env === 'mock' || import.meta.env.VITE_IS_REQUEST_PROXY !== 'true' 
 const transform: AxiosTransform = {
   // 处理请求数据。如果数据不是预期格式，可直接抛出错误
   transformRequestHook: (res, options) => {
-    const {isTransformResponse, isReturnNativeResponse} = options;
+    const { isTransformResponse, isReturnNativeResponse } = options;
 
     // 如果204无内容直接返回
     const method = res.config.method?.toLowerCase();
@@ -37,27 +37,26 @@ const transform: AxiosTransform = {
     }
 
     // 错误的时候返回
-    const {data} = res;
+    const { data } = res;
     if (!data) {
       throw new Error('请求接口错误');
     }
 
     //  这里 code为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const {code, msg} = data;
+    const { code, msg } = data;
 
     // 这里逻辑可以根据项目进行修改
     if (code === 0) {
       return data.data;
-    } else {
-      MessagePlugin.error(msg);
     }
+    MessagePlugin.error(msg);
 
     throw new Error(`请求接口错误, 错误码: ${code}:${msg}`);
   },
 
   // 请求前处理配置
   beforeRequestHook: (config, options) => {
-    const {apiUrl, isJoinPrefix, urlPrefix, joinParamsToUrl, formatDate, joinTime = true} = options;
+    const { apiUrl, isJoinPrefix, urlPrefix, joinParamsToUrl, formatDate, joinTime = true } = options;
 
     // 添加接口前缀
     if (isJoinPrefix && urlPrefix && isString(urlPrefix)) {
@@ -100,7 +99,7 @@ const transform: AxiosTransform = {
         config.params = undefined;
       }
       if (joinParamsToUrl) {
-        config.url = setObjToUrlParams(config.url as string, {...config.params, ...config.data});
+        config.url = setObjToUrlParams(config.url as string, { ...config.params, ...config.data });
       }
     } else {
       // 兼容restful风格
@@ -131,27 +130,27 @@ const transform: AxiosTransform = {
   // 响应错误处理
   responseInterceptorsCatch: (error: any, instance: AxiosInstance) => {
     const checkStatus = function () {
-      const {code, msg} = error || {}
+      const { code, msg } = error || {};
       if (code === 'ECONNABORTED' && msg.indexOf('timeout') !== -1) {
-        MessagePlugin.error("请求超时请重试");
+        MessagePlugin.error('请求超时请重试');
         return;
       }
       const status = error?.response?.status;
       if (status === 401) {
-        MessagePlugin.warning("请重新登录");
+        MessagePlugin.warning('请重新登录');
         router.push(`/login?redirect=${router.currentRoute.value.fullPath}`);
       } else if (status === 403) {
-        MessagePlugin.error("没有权限，请联系管理员");
+        MessagePlugin.error('没有权限，请联系管理员');
       } else if (status === 404) {
-        MessagePlugin.error("请求地址错误");
+        MessagePlugin.error('请求地址错误');
       } else if (status === 500) {
-        MessagePlugin.error("服务器错误，请刷新重试");
+        MessagePlugin.error('服务器错误，请刷新重试');
       } else {
         MessagePlugin.error(error.message);
       }
-    }
+    };
 
-    const {config} = error;
+    const { config } = error;
     if (!config || !config.requestOptions.retry) {
       checkStatus();
       return Promise.reject(error);
@@ -168,7 +167,7 @@ const transform: AxiosTransform = {
         resolve(config);
       }, config.requestOptions.retry.delay || 1);
     });
-    config.headers = {...config.headers, 'Content-Type': ContentTypeEnum.Json};
+    config.headers = { ...config.headers, 'Content-Type': ContentTypeEnum.Json };
     return backoff.then((config) => instance.request(config));
   },
 };
@@ -185,7 +184,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
         // 携带Cookie
         // withCredentials: true,
         // 头信息
-        headers: {'Content-Type': ContentTypeEnum.Json},
+        headers: { 'Content-Type': ContentTypeEnum.Json },
         // 数据处理方式
         transform,
         // 配置项，下面的选项都可以在独立的接口请求中覆盖

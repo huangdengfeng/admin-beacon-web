@@ -1,7 +1,6 @@
 import 'nprogress/nprogress.css'; // progress bar style
 
 import NProgress from 'nprogress'; // progress bar
-import { MessagePlugin } from 'tdesign-vue-next';
 
 import { getStorageToken } from '@/config/global';
 import router from '@/router';
@@ -39,7 +38,7 @@ router.beforeEach(async (to, from, next) => {
         next(`/`);
       }
     } catch (error) {
-      MessagePlugin.error(error.message);
+      // MessagePlugin.error(error.message);
       next({
         path: '/login',
         query: { redirect: encodeURIComponent(to.fullPath) },

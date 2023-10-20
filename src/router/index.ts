@@ -1,13 +1,13 @@
 import uniq from 'lodash/uniq';
-import {createRouter, createWebHistory, RouteRecordRaw, useRoute} from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw, useRoute } from 'vue-router';
 
 const env = import.meta.env.MODE || 'development';
 
 // 导入homepage相关固定路由
-const homepageModules = import.meta.glob('./modules/**/homepage.ts', {eager: true});
+const homepageModules = import.meta.glob('./modules/**/homepage.ts', { eager: true });
 
 // 导入modules非homepage相关固定路由
-const fixedModules = import.meta.glob('./modules/**/!(homepage).ts', {eager: true});
+const fixedModules = import.meta.glob('./modules/**/!(homepage).ts', { eager: true });
 
 // 其他固定路由
 const defaultRouterList: Array<RouteRecordRaw> = [
@@ -18,7 +18,7 @@ const defaultRouterList: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/dashboard/base',
+    redirect: '/dashboard',
   },
 ];
 // 存放固定路由
@@ -48,11 +48,11 @@ export const getRoutesExpanded = () => {
     }
     if (item.children && item.children.length > 0) {
       item.children
-      .filter((child) => child.meta && child.meta.expanded)
-      .forEach((child: RouteRecordRaw) => {
-        expandedRoutes.push(item.path);
-        expandedRoutes.push(`${item.path}/${child.path}`);
-      });
+        .filter((child) => child.meta && child.meta.expanded)
+        .forEach((child: RouteRecordRaw) => {
+          expandedRoutes.push(item.path);
+          expandedRoutes.push(`${item.path}/${child.path}`);
+        });
     }
   });
   return uniq(expandedRoutes);
@@ -66,10 +66,10 @@ export const getActive = (maxLevel = 3): string => {
   }
 
   return route.path
-  .split('/')
-  .filter((_item: string, index: number) => index <= maxLevel && index > 0)
-  .map((item: string) => `/${item}`)
-  .join('');
+    .split('/')
+    .filter((_item: string, index: number) => index <= maxLevel && index > 0)
+    .map((item: string) => `/${item}`)
+    .join('');
 };
 
 const router = createRouter({

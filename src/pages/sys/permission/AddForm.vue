@@ -64,7 +64,7 @@ export default {
         .post({ url: '/sys/permission/add', data: this.data })
         .then(() => {
           this.$emit('refresh');
-          this.$message.success('保存成功');
+          this.$message.success('添加成功');
           this.close();
         })
         .finally(() => {

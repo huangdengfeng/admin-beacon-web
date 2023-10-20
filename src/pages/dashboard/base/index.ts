@@ -1,208 +1,30 @@
 import dayjs from 'dayjs';
-import { EChartsOption } from 'echarts';
 
 import { TChartColor } from '@/config/color';
-import { getRandomArray } from '@/utils/charts';
+import { getDateArray, getRandomArray } from '@/utils/charts';
 import { getChartListColor } from '@/utils/color';
 
-/** 首页 dashboard 折线图 */
-export function constructInitDashboardDataset(type: string) {
-  const dateArray: Array<string> = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-  const datasetAxis = {
-    xAxis: {
-      type: 'category',
-      show: false,
-      data: dateArray,
-    },
-    yAxis: {
-      show: false,
-      type: 'value',
-    },
-    grid: {
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-    },
-  };
-
-  if (type === 'line') {
-    const lineDataset = {
-      ...datasetAxis,
-      color: ['#fff'],
-      series: [
-        {
-          data: [150, 230, 224, 218, 135, 147, 260],
-          type,
-          showSymbol: true,
-          symbol: 'circle',
-          symbolSize: 0,
-          markPoint: {
-            data: [
-              { type: 'max', name: '最大值' },
-              { type: 'min', name: '最小值' },
-            ],
-          },
-          lineStyle: {
-            width: 2,
-          },
-        },
-      ],
-    };
-    return lineDataset;
-  }
-  const barDataset = {
-    ...datasetAxis,
-    color: getChartListColor(),
-    series: [
-      {
-        data: [
-          100,
-          130,
-          184,
-          218,
-          {
-            value: 135,
-            itemStyle: {
-              opacity: 0.2,
-            },
-          },
-          {
-            value: 118,
-            itemStyle: {
-              opacity: 0.2,
-            },
-          },
-          {
-            value: 60,
-            itemStyle: {
-              opacity: 0.2,
-            },
-          },
-        ],
-        type,
-        barWidth: 9,
-      },
-    ],
-  };
-  return barDataset;
-}
-
-/** 柱状图数据源 */
-export function constructInitDataset({
-  dateTime = [],
-  placeholderColor,
-  borderColor,
-}: { dateTime: Array<string> } & TChartColor) {
-  const divideNum = 10;
-  const timeArray = [];
-  const inArray = [];
-  const outArray = [];
-  for (let i = 0; i < divideNum; i++) {
-    if (dateTime.length > 0) {
-      const dateAbsTime: number = (new Date(dateTime[1]).getTime() - new Date(dateTime[0]).getTime()) / divideNum;
-      const enhandTime: number = new Date(dateTime[0]).getTime() + dateAbsTime * i;
-      timeArray.push(dayjs(enhandTime).format('YYYY-MM-DD'));
-    } else {
-      timeArray.push(
-        dayjs()
-          .subtract(divideNum - i, 'day')
-          .format('YYYY-MM-DD'),
-      );
-    }
-
-    inArray.push(getRandomArray().toString());
-    outArray.push(getRandomArray().toString());
-  }
-
-  const dataset = {
-    color: getChartListColor(),
-    tooltip: {
-      trigger: 'item',
-    },
-    xAxis: {
-      type: 'category',
-      data: timeArray,
-      axisLabel: {
-        color: placeholderColor,
-      },
-      axisLine: {
-        lineStyle: {
-          color: getChartListColor()[1],
-          width: 1,
-        },
-      },
-    },
-    yAxis: {
-      type: 'value',
-      axisLabel: {
-        color: placeholderColor,
-      },
-      splitLine: {
-        lineStyle: {
-          color: borderColor,
-        },
-      },
-    },
-    grid: {
-      top: '5%',
-      left: '25px',
-      right: 0,
-      bottom: '60px',
-    },
-    legend: {
-      icon: 'rect',
-      itemWidth: 12,
-      itemHeight: 4,
-      itemGap: 48,
-      textStyle: {
-        fontSize: 12,
-        color: placeholderColor,
-      },
-      left: 'center',
-      bottom: '0',
-      orient: 'horizontal',
-      data: ['本月', '上月'],
-    },
-    series: [
-      {
-        name: '本月',
-        data: outArray,
-        type: 'bar',
-      },
-      {
-        name: '上月',
-        data: inArray,
-        type: 'bar',
-      },
-    ],
-  };
-
-  return dataset;
-}
-
 /**
- *  线性图表数据源
+ * 散点图数据
  *
  * @export
- * @param {Array<string>} [dateTime=[]]
- * @returns {*}
+ * @returns {}
  */
-export function getLineChartDataSet({
+export function getScatterDataSet({
   dateTime = [],
   placeholderColor,
   borderColor,
 }: { dateTime?: Array<string> } & TChartColor) {
-  const divideNum = 10;
+  const divideNum = 40;
   const timeArray = [];
   const inArray = [];
   const outArray = [];
   for (let i = 0; i < divideNum; i++) {
+    // const [timeArray, inArray, outArray] = dataset;
     if (dateTime.length > 0) {
       const dateAbsTime: number = (new Date(dateTime[1]).getTime() - new Date(dateTime[0]).getTime()) / divideNum;
-      const enhandTime: number = new Date(dateTime[0]).getTime() + dateAbsTime * i;
-      // console.log('dateAbsTime..', dateAbsTime, enhandTime);
-      timeArray.push(dayjs(enhandTime).format('MM-DD'));
+      const endTime: number = new Date(dateTime[0]).getTime() + dateAbsTime * i;
+      timeArray.push(dayjs(endTime).format('MM-DD'));
     } else {
       timeArray.push(
         dayjs()
@@ -215,23 +37,107 @@ export function getLineChartDataSet({
     outArray.push(getRandomArray().toString());
   }
 
-  const dataSet = {
+  return {
     color: getChartListColor(),
+    xAxis: {
+      data: timeArray,
+      axisLabel: {
+        color: placeholderColor,
+      },
+      splitLine: { show: false },
+      axisLine: {
+        lineStyle: {
+          color: borderColor,
+          width: 1,
+        },
+      },
+    },
+    yAxis: {
+      type: 'value',
+      // splitLine: { show: false},
+      axisLabel: {
+        color: placeholderColor,
+      },
+      nameTextStyle: {
+        padding: [0, 0, 0, 60],
+      },
+      axisTick: {
+        show: false,
+        axisLine: {
+          show: false,
+        },
+      },
+      axisLine: {
+        show: false,
+      },
+      splitLine: {
+        lineStyle: {
+          color: borderColor,
+        },
+      },
+    },
     tooltip: {
       trigger: 'item',
     },
     grid: {
-      left: '0',
-      right: '20px',
       top: '5px',
-      bottom: '36px',
-      containLabel: true,
+      left: '25px',
+      right: '5px',
+      bottom: '60px',
     },
     legend: {
       left: 'center',
       bottom: '0',
       orient: 'horizontal', // legend 横向布局。
-      data: ['本月', '上月'],
+      data: ['按摩仪', '咖啡机'],
+      itemHeight: 8,
+      itemWidth: 8,
+      textStyle: {
+        fontSize: 12,
+        color: placeholderColor,
+      },
+    },
+    series: [
+      {
+        name: '按摩仪',
+        symbolSize: 10,
+        data: outArray.reverse(),
+        type: 'scatter',
+      },
+      {
+        name: '咖啡机',
+        symbolSize: 10,
+        data: inArray.concat(inArray.reverse()),
+        type: 'scatter',
+      },
+    ],
+  };
+}
+
+/** 折线图数据 */
+export function getFolderLineDataSet({
+  dateTime = [],
+  placeholderColor,
+  borderColor,
+}: { dateTime?: Array<string> } & TChartColor) {
+  let dateArray: Array<string> = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  if (dateTime.length > 0) {
+    const divideNum = 7;
+    dateArray = getDateArray(dateTime, divideNum);
+  }
+  return {
+    color: getChartListColor(),
+    grid: {
+      top: '5%',
+      right: '10px',
+      left: '30px',
+      bottom: '60px',
+    },
+    legend: {
+      left: 'center',
+      bottom: '0',
+      orient: 'horizontal', // legend 横向布局。
+      data: ['杯子', '茶叶', '蜂蜜', '面粉'],
       textStyle: {
         fontSize: 12,
         color: placeholderColor,
@@ -239,13 +145,14 @@ export function getLineChartDataSet({
     },
     xAxis: {
       type: 'category',
-      data: timeArray,
+      data: dateArray,
       boundaryGap: false,
       axisLabel: {
         color: placeholderColor,
       },
       axisLine: {
         lineStyle: {
+          color: borderColor,
           width: 1,
         },
       },
@@ -261,137 +168,93 @@ export function getLineChartDataSet({
         },
       },
     },
-    series: [
-      {
-        name: '本月',
-        data: outArray,
-        type: 'line',
-        smooth: false,
-        showSymbol: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          borderColor,
-          borderWidth: 1,
-        },
-        areaStyle: {
-          opacity: 0.1,
-        },
-      },
-      {
-        name: '上月',
-        data: inArray,
-        type: 'line',
-        smooth: false,
-        showSymbol: true,
-        symbol: 'circle',
-        symbolSize: 8,
-        itemStyle: {
-          borderColor,
-          borderWidth: 1,
-        },
-      },
-    ],
-  };
-  return dataSet;
-}
-
-/**
- * 获取饼图数据
- *
- * @export
- * @param {number} [radius=1]
- * @returns {*}
- */
-export function getPieChartDataSet({
-  radius = 42,
-  textColor,
-  placeholderColor,
-  containerColor,
-}: { radius?: number } & Record<string, string>): EChartsOption {
-  return {
-    color: getChartListColor(),
     tooltip: {
-      show: false,
-      trigger: 'axis',
-      position: null,
-    },
-    grid: {
-      top: '0',
-      right: '0',
-    },
-    legend: {
-      selectedMode: false,
-      itemWidth: 12,
-      itemHeight: 4,
-      textStyle: {
-        fontSize: 12,
-        color: placeholderColor,
-      },
-      left: 'center',
-      bottom: '0',
-      orient: 'horizontal', // legend 横向布局。
+      trigger: 'item',
     },
     series: [
       {
-        name: '销售渠道',
-        type: 'pie',
-        radius: ['48%', '60%'],
-        avoidLabelOverlap: true,
-        selectedMode: true,
-        silent: true,
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        name: '杯子',
+        stack: '总量',
+        data: [
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+        ],
+        type: 'line',
         itemStyle: {
-          borderColor: containerColor,
+          borderColor,
           borderWidth: 1,
         },
-        label: {
-          show: true,
-          position: 'center',
-          formatter: ['{value|{d}%}', '{name|{b}渠道占比}'].join('\n'),
-          rich: {
-            value: {
-              color: textColor,
-              fontSize: 28,
-              fontWeight: 'normal',
-              lineHeight: 46,
-            },
-            name: {
-              color: '#909399',
-              fontSize: 12,
-              lineHeight: 14,
-            },
-          },
-        },
-        emphasis: {
-          scale: true,
-          label: {
-            show: true,
-            formatter: ['{value|{d}%}', '{name|{b}渠道占比}'].join('\n'),
-            rich: {
-              value: {
-                color: textColor,
-                fontSize: 28,
-                fontWeight: 'normal',
-                lineHeight: 46,
-              },
-              name: {
-                color: '#909399',
-                fontSize: 14,
-                lineHeight: 14,
-              },
-            },
-          },
-        },
-        labelLine: {
-          show: false,
-        },
+      },
+      {
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        name: '茶叶',
+        stack: '总量',
         data: [
-          {
-            value: 1048,
-            name: '线上',
-          },
-          { value: radius * 7, name: '门店' },
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
         ],
+        type: 'line',
+        itemStyle: {
+          borderColor,
+          borderWidth: 1,
+        },
+      },
+      {
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        name: '蜂蜜',
+        stack: '总量',
+        data: [
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+        ],
+        type: 'line',
+        itemStyle: {
+          borderColor,
+          borderWidth: 1,
+        },
+      },
+      {
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        name: '面粉',
+        stack: '总量',
+        data: [
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+          getRandomArray(),
+        ],
+        type: 'line',
+        itemStyle: {
+          borderColor,
+          borderWidth: 1,
+        },
       },
     ],
   };

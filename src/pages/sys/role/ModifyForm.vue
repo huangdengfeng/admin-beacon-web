@@ -22,8 +22,20 @@
             </t-form-item>
           </t-col>
           <t-col :span="12">
-            <t-form-item :rules="[{ required: true }]" help="停用后所有用户都不会有该权限" label="状态" name="status">
+            <t-form-item :rules="[{ required: true }]" help="停用后所有用户都不会有该角色" label="状态" name="status">
               <t-radio-group v-model="data.status" :options="RECORD_STATUS_ARRAY"></t-radio-group>
+            </t-form-item>
+          </t-col>
+          <t-col :span="12">
+            <t-form-item label="权限" name="permissionIds">
+              <t-tree
+                ref="tree"
+                v-model="data.permissionIds"
+                :checkable="true"
+                :data="permissions"
+                :keys="{ value: 'id', label: 'name' }"
+                value-mode="all"
+              />
             </t-form-item>
           </t-col>
           <t-col :span="12">
@@ -49,13 +61,22 @@ export default {
   data() {
     return {
       data: {},
+      // 权限树
+      permissions: null,
       visible: false,
     };
   },
+  mounted() {
+    request.post({ url: '/sys/permission/list' }).then((permissions) => {
+      this.permissions = permissions;
+    });
+  },
   methods: {
-    open(permission) {
-      this.visible = true;
-      this.data = permission;
+    open(roleId) {
+      request.get({ url: `/sys/role/detail/${roleId}` }).then((role) => {
+        this.visible = true;
+        this.data = role;
+      });
     },
     save({ validateResult, e }) {
       e.preventDefault();
@@ -63,15 +84,24 @@ export default {
         return;
       }
       this.$loading(true);
+      const calPermissionIds = [];
+      // tree组件当前勾选子节点，提交时候不包含父节点，只有子节点全部勾选才包含，等待更新 https://github.com/Tencent/tdesign-vue-next/issues/2382
+      for (const item of this.data.permissionIds) {
+        calPermissionIds.push(item);
+        const parent = this.$refs.tree.getParent(item);
+        if (parent) {
+          calPermissionIds.push(parent.value);
+        }
+      }
       request
         .post({
-          url: '/sys/permission/modify',
+          url: '/sys/role/modify',
           data: {
             id: this.data.id,
-            parentId: this.data.parentId,
             name: this.data.name,
             code: this.data.code,
             status: this.data.status,
+            permissionIds: calPermissionIds,
           },
         })
         .then(() => {

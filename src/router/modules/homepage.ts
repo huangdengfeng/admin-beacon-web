@@ -7,28 +7,21 @@ export default [
   {
     path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard/base',
+    redirect: '/dashboard/index',
     name: 'dashboard',
     meta: {
-      title: '仪表盘',
+      title: '首页',
       icon: shallowRef(DashboardIcon),
       orderNo: 0,
     },
     children: [
       {
-        path: 'base',
+        path: 'index',
         name: 'DashboardBase',
         component: () => import('@/pages/dashboard/base/index.vue'),
         meta: {
-          title: '概览仪表盘',
-        },
-      },
-      {
-        path: 'detail',
-        name: 'DashboardDetail',
-        component: () => import('@/pages/dashboard/detail/index.vue'),
-        meta: {
-          title: '统计报表',
+          title: '首页',
+          hidden: true,
         },
       },
     ],

@@ -4,7 +4,7 @@
     :close-on-overlay-click="false"
     :destroy-on-close="true"
     :footer="false"
-    header="修改"
+    header="添加"
     scroll-to-first-error="smooth"
     width="750"
   >
@@ -22,8 +22,15 @@
             </t-form-item>
           </t-col>
           <t-col :span="12">
-            <t-form-item :rules="[{ required: true }]" help="停用后所有用户都不会有该权限" label="状态" name="status">
-              <t-radio-group v-model="data.status" :options="RECORD_STATUS_ARRAY"></t-radio-group>
+            <t-form-item label="权限" name="permissionIds">
+              <t-tree
+                ref="tree"
+                v-model="data.permissionIds"
+                :checkable="true"
+                :data="permissions"
+                :keys="{ value: 'id', label: 'name' }"
+                value-mode="all"
+              />
             </t-form-item>
           </t-col>
           <t-col :span="12">
@@ -38,24 +45,32 @@
   </t-dialog>
 </template>
 <script>
-import { RECORD_STATUS_ARRAY } from '@/utils/dict';
 import { request } from '@/utils/request';
 
+const INIT_DATA = {
+  name: null,
+  code: null,
+  permissionIds: [],
+};
 export default {
-  name: 'ModifyForm',
-  setup() {
-    return { RECORD_STATUS_ARRAY };
-  },
+  name: 'AddForm',
   data() {
     return {
-      data: {},
+      data: { ...INIT_DATA },
       visible: false,
+      // 权限树
+      permissions: null,
     };
   },
+  mounted() {
+    request.post({ url: '/sys/permission/list' }).then((permissions) => {
+      this.permissions = permissions;
+    });
+  },
   methods: {
-    open(permission) {
+    open() {
       this.visible = true;
-      this.data = permission;
+      this.data = { ...INIT_DATA };
     },
     save({ validateResult, e }) {
       e.preventDefault();
@@ -63,20 +78,20 @@ export default {
         return;
       }
       this.$loading(true);
+      const calPermissionIds = [];
+      // tree组件当前勾选子节点，提交时候不包含父节点，只有子节点全部勾选才包含，等待更新 https://github.com/Tencent/tdesign-vue-next/issues/2382
+      for (const item of this.data.permissionIds) {
+        calPermissionIds.push(item);
+        const parent = this.$refs.tree.getParent(item);
+        if (parent) {
+          calPermissionIds.push(parent.value);
+        }
+      }
       request
-        .post({
-          url: '/sys/permission/modify',
-          data: {
-            id: this.data.id,
-            parentId: this.data.parentId,
-            name: this.data.name,
-            code: this.data.code,
-            status: this.data.status,
-          },
-        })
+        .post({ url: '/sys/role/add', data: { ...this.data, permissionIds: calPermissionIds } })
         .then(() => {
           this.$emit('refresh');
-          this.$message.success('修改成功');
+          this.$message.success('添加成功');
           this.close();
         })
         .finally(() => {
