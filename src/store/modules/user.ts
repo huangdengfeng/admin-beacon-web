@@ -46,6 +46,7 @@ export const useUserStore = defineStore('user', {
     async logout() {
       removeStorageToken();
       this.userInfo = { ...InitUserInfo };
+      this.inited = false;
     },
   },
 });
