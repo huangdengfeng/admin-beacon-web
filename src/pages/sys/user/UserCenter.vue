@@ -70,13 +70,13 @@
                     validator: checkPassword,
                   },
                 ]"
-                label="原密码"
+                label="新密码"
                 name="newPassword"
               >
                 <t-input
                   v-model="pwdData.newPassword"
                   :maxcharacter="20"
-                  placeholder="请输入原密码"
+                  placeholder="请输入新密码"
                   type="password"
                 ></t-input>
               </t-form-item>

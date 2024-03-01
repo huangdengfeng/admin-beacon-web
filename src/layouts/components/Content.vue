@@ -1,15 +1,15 @@
 <template>
   <router-view v-if="!isRefreshing" v-slot="{ Component }">
-    <transition name="fade">
-      <keep-alive :include="aliveViews">
-        <component :is="Component" />
-      </keep-alive>
-    </transition>
+    <!--    <transition name="fade">-->
+    <keep-alive :include="aliveViews">
+      <component :is="Component" />
+    </keep-alive>
+    <!--    </transition>-->
   </router-view>
   <frame-page />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import isBoolean from 'lodash/isBoolean';
 import isUndefined from 'lodash/isUndefined';
 import type { ComputedRef } from 'vue';
@@ -53,6 +53,7 @@ const isRefreshing = computed(() => {
 .fade-enter-active {
   transition: opacity @anim-duration-slow @anim-time-fn-easing;
 }
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
