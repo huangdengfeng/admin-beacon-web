@@ -112,7 +112,7 @@ export default {
         if (!userName) {
           resolve(true);
         } else {
-          request.post({ url: '/sys/user/page', data: { userName } }).then(({ total, data }) => {
+          request.post({ url: '/sys/user/page', data: { userName, page: 1, pageSize: 1 } }).then(({ total, data }) => {
             if (total === 1 && this.data.uid !== data[0].uid) {
               resolve({ result: false, message: '用户名已存在' });
             } else {
